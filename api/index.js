@@ -56,7 +56,9 @@ async function onRequest(req, res) {
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
   
   let response = await tfetch(request);
-  response.headers.forEach((value,key)=>response.headers.set(key,String(value).replace(hostTarget,thisHost)));
+  const headers = new Headers();
+  response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
+  response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}))'
   
   for (const host of replaceHosts) {
     if (response.status >= 400) {
