@@ -56,9 +56,9 @@ async function onRequest(req, res) {
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
   
   let response = await tfetch(request);
-  const headers = new Headers();
+  let headers = new Headers();
   response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
-  response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}))'
+  response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}));
   
   for (const host of replaceHosts) {
     if (response.status >= 400) {
@@ -66,10 +66,13 @@ async function onRequest(req, res) {
       url.host = host;
       request = new Request(String(url), request);
       response = await tfetch(request);
+      headers = new Headers();
+      response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
+      response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}));
     }
   }
   /* copy over response headers*/
-  response.headers?.forEach?.((value, key) => res.setHeader(key, value));
+  response.headers.forEach((value, key) => res.setHeader(key, value));
   new Map(Object.entries(nocacheHeaders)).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
   res.removeHeader("content-encoding");
