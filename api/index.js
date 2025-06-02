@@ -28,7 +28,7 @@ const replaceHosts = ["staticpokeheroes.com","upload.pokeheroes.com", "pokeheroe
 http.createServer(onRequest).listen(3000);
 
 async function onRequest(req, res) {
-  console.log("Incoming Request: ",req);
+  console.log("Incoming Request: ",req.headers['cookie']);
   const thisHost = req.headers.host;
   req.headers.host = hostTarget;
   req.headers.referer = hostTarget;
@@ -55,10 +55,10 @@ async function onRequest(req, res) {
   /* fetch from your desired target */
   let request = new Request(`https://${hostTarget}${req.url}`, options);
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
-  console.log("Fetch Request: ",request);
+  console.log("Fetch Request: ",request.headers.get('cookie'));
   
   let response = await tfetch(request);
-  console.log("Fetch Response: ",response);
+  console.log("Fetch Response: ",response.headers.get('set-cookie'));
   let headers = new Headers();
   response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
   response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}));
@@ -68,9 +68,9 @@ async function onRequest(req, res) {
       const url = new URL(request.url);
       url.host = host;
       request = new Request(String(url), request);
-      console.log("Retry Request: ",request);
+      console.log("Retry Request: ",request.headers.get('cookie'));
       response = await tfetch(request);
-      console.log("Retry Response: ",response);
+      console.log("Retry Response: ",response.headers.get('set-cookie'));
       headers = new Headers();
       response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
       response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}));
@@ -92,5 +92,5 @@ async function onRequest(req, res) {
   } else {
     res.end(Buffer.from(await response.arrayBuffer()));
   }
-  console.log("Outgoing Response: ",res);
+  console.log("Outgoing Response: ",res.getHeader('set-cookie'));
 }
