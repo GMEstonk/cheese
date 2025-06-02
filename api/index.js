@@ -11,6 +11,7 @@ async function tfetch() {
   try {
     return await fetch(...arguments);
   } catch (e) {
+    console.log(e,...arguments);
     return new Response(null, {
       status: 500,
       statusText: e.message,
@@ -39,15 +40,11 @@ async function onRequest(req, res) {
   await new Promise((resolve) => {
     req.on("end", resolve);
   });
-  /* finish reading the body of the request*/
-  /* start copying over the other parts of the request */
-  const options = Object.assign(
-    {
+
+  const options = Object.assign({
       method: req.method,
       headers: req.headers,
-    },
-    nocacheHeaders,
-  );
+    },nocacheHeaders);
   /* fetch throws an error if you send a body with a GET request even if it is empty */
   if (!req.method.match(/GET|HEAD/) && bdy.length > 4) {
     options.body = bdy;
@@ -56,22 +53,22 @@ async function onRequest(req, res) {
 
   /* fetch from your desired target */
   let request = new Request(`https://${hostTarget}${req.url}`, options);
+  request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
+  
   let response = await tfetch(request);
-
+  response.headers.forEach((value,key)=>response.headers.set(key,String(value).replace(hostTarget,thisHost)));
+  
   for (const host of replaceHosts) {
-    console.log(host);
     if (response.status >= 400) {
-      console.log(response.status, request.url);
       const url = new URL(request.url);
       url.host = host;
-      console.log(url);
       request = new Request(String(url), request);
       response = await tfetch(request);
-      console.log(response);
     }
   }
   /* copy over response headers*/
   response.headers?.forEach?.((value, key) => res.setHeader(key, value));
+  new Map(Object.entries(nocacheHeaders)).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
   res.removeHeader("content-encoding");
   /* check to see if the response is not a text format */
