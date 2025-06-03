@@ -64,19 +64,19 @@ async function onRequest(req, res) {
   console.log("Fetch Response: ",response.headers.get('set-cookie'));
   let headers = new Headers();
   response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
-  response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}));
+  response = new Response(response.clone().body,Object.defineProperty(response.clone(),'headers',{value:headers}));
   
   for (const host of replaceHosts) {
     if (response.status >= 400) {
       const url = new URL(request.url);
       url.host = host;
-      request = new Request(String(url), request);
+      request = new Request(String(url), request.clone());
       console.log("Retry Request: ",request.headers.get('cookie'));
       response = await tfetch(request);
       console.log("Retry Response: ",response.headers.get('set-cookie'));
       headers = new Headers();
       response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
-      response = new Response(response.body,Object.defineProperty(response,'headers',{value:headers}));
+      response = new Response(response.clone().body,Object.defineProperty(response.clone(),'headers',{value:headers}));
     }
   }
   /* copy over response headers*/
@@ -87,13 +87,13 @@ async function onRequest(req, res) {
   /* check to see if the response is not a text format */
   if (!`${response.headers.get("content-type")}`.match(/image|video|audio/i)) {
     /* Copy over target response and return */
-    let resBody = await response.text();
+    let resBody = await response.clone().text();
     for (const host of replaceHosts) {
       resBody = resBody.replace(RegExp(host, "gi"), thisHost);
     }
     res.end(resBody);
   } else {
-    res.end(Buffer.from(await response.arrayBuffer()));
+    res.end(Buffer.from(await response.clone().arrayBuffer()));
   }
   console.log("Outgoing Response: ",res.getHeader('set-cookie'));
 }
