@@ -24,7 +24,7 @@ const http = require("http");
 const Buffer = require("buffer").Buffer;
 
 const hostTarget = "pokeheroes.com";
-const replaceHosts = ["staticpokeheroes.com","upload.pokeheroes.com", "pokeheroes.com"];
+const replaceHosts = ["staticpokeheroes.com","upload.pokeheroes.com", "panel.pokeheroes.com","pokeheroes.com"];
 
 http.createServer(onRequest).listen(3000);
 
