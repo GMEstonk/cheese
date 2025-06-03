@@ -9,7 +9,8 @@ const nocacheHeaders = {
 
 async function tfetch() {
   try {
-    return await fetch(...arguments);
+    const args = [...arguments].map(x=>x?.clone?.() ?? x);
+    return await fetch(...args);
   } catch (e) {
     console.log(e,...arguments);
     return new Response(null, {
