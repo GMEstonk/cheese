@@ -36,7 +36,7 @@ async function onRequest(req, res) {
   /* start reading the body of the request*/
   let bdy = [];
   req.on("data", (chunk) => {
-    bdy = bdy.concat(chunk);
+    bdy = [...bdy,...chunk];
   });
   await new Promise((resolve) => {
     req.on("end", resolve);
@@ -48,7 +48,7 @@ async function onRequest(req, res) {
     },nocacheHeaders);
   /* fetch throws an error if you send a body with a GET request even if it is empty */
   if (!req.method.match(/GET|HEAD/)) {
-    options.body = new ArrayBuffer(bdy);
+    options.body = new Uint8Array(bdy);
   }
   /* finish copying over the other parts of the request */
 
