@@ -41,15 +41,14 @@ async function onRequest(req, res) {
   await new Promise((resolve) => {
     req.on("end", resolve);
   });
-
+  console.log('Body: ',bdy);
   const options = Object.assign({
       method: req.method,
       headers: req.headers,
     },nocacheHeaders);
   /* fetch throws an error if you send a body with a GET request even if it is empty */
-  if (!req.method.match(/GET|HEAD/) && bdy.length > 4) {
+  if (!req.method.match(/GET|HEAD/)) {
     options.body = new ArrayBuffer(bdy);
-    console.warn('Body: ',options.body);
   }
   /* finish copying over the other parts of the request */
 
