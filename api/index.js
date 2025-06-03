@@ -56,6 +56,8 @@ async function onRequest(req, res) {
   let request = new Request(`https://${hostTarget}${req.url}`, options);
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
   request.headers.append('cookie','username=Substitute');
+  request.headers.delete("content-length");
+  request.headers.delete("content-encoding");
   console.log("Fetch Request: ",request.headers.get('cookie'));
   
   let response = await tfetch(request);
