@@ -49,6 +49,7 @@ async function onRequest(req, res) {
   /* fetch throws an error if you send a body with a GET request even if it is empty */
   if (!req.method.match(/GET|HEAD/) && bdy.length > 4) {
     options.body = new ArrayBuffer(bdy);
+    console.warn('Body: ',options.body);
   }
   /* finish copying over the other parts of the request */
 
