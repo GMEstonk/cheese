@@ -108,9 +108,9 @@ async function onRequest(req, res) {
   response.headers.forEach((value, key) => res.setHeader(key, value));
   new Map(Object.entries(nocacheHeaders)).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
-  res.removeHeader("content-encoding");
   /* check to see if the response is not a text format */
   if (!`${response.headers.get("content-type")}`.match(/image|video|audio/i)) {
+    res.removeHeader("content-encoding");
     /* Copy over target response and return */
     let resBody = await response.clone().text();
     for (const host of replaceHosts) {
