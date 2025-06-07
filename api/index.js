@@ -110,7 +110,7 @@ async function onRequest(req, res) {
   res.removeHeader("content-length");
   /* check to see if the response is not a text format */
   if (!`${response.headers.get("content-type")}`.match(/image|video|audio/i)) {
-    if(!req.url.includes('favicon.ico'))res.removeHeader("content-encoding");
+    res.removeHeader("content-encoding");
     /* Copy over target response and return */
     let resBody = await response.clone().text();
     for (const host of replaceHosts) {
@@ -121,6 +121,7 @@ async function onRequest(req, res) {
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
     res.end(resBody);
   } else {
+    if(!req.url.includes('favicon.ico'))res.removeHeader("content-encoding");
     res.end(Buffer.from(await response.clone().arrayBuffer()));
   }
   console.log("Outgoing Response: ",res.getHeader('set-cookie'));
