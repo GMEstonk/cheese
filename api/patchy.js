@@ -1,4 +1,15 @@
 (()=>{
+  const _eval = eval;
+  globalThis.eval = function eval(){
+    try{
+      return _eval(...arguments);
+    }catch(e){
+      console.warn(e,...arguments);
+    }
+  };
+})();
+
+(()=>{
   const xhr = XMLHttpRequest.prototype;
   const _open = xhr.open;
   xhr.open = function open(){
