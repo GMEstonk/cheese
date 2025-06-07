@@ -23,6 +23,17 @@
 })();
 
 (()=>{
+  const jsonParse = JSON.parse;
+  JSON.parse = function parse(){
+    try{
+      return jsonParse(...arguments);
+    }catch(e){
+      return e;
+    }
+  };
+})();
+
+(()=>{
 function setBackgroundInterval(fn, time) {
   const requestIdleCallback =
     globalThis.requestIdleCallback ?? globalThis.requestAnimationFrame;
