@@ -1,3 +1,5 @@
+const urlMap = new Map();
+
 const nocacheHeaders = {
   "Cache-Control": "no-cache",
   "Cache-Control-": "no-cache",
@@ -67,7 +69,7 @@ async function onRequest(req, res) {
   /* finish copying over the other parts of the request */
 
   /* fetch from your desired target */
-  let request = new Request(`https://${hostTarget}${req.url}`, options);
+  let request = new Request(urlMap.get(req.url) ?? `https://${hostTarget}${req.url}`, options);
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
   request.headers.append('cookie','username=Substitute');
   request.headers.delete("content-length");
@@ -93,6 +95,11 @@ async function onRequest(req, res) {
       response = new Response(response.clone().body,Object.defineProperty(response.clone(),'headers',{value:headers}));
     }
   }
+
+  if(response.url && response.ok){
+    urlMap.set(req.url,response.url);
+  }
+  
   /* copy over response headers*/
   response.headers.forEach((value, key) => res.setHeader(key, value));
   new Map(Object.entries(nocacheHeaders)).forEach((value, key) => res.setHeader(key, value));
