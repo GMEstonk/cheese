@@ -1,4 +1,15 @@
 (()=>{
+  const dateParse = Date.parse;
+  Date.parse = function parse(){
+    try{
+      return dateParse(...arguments);
+    }catch{
+      return new Date();
+    }
+  }
+})();
+
+(()=>{
 function setBackgroundInterval(fn, time) {
   const requestIdleCallback =
     globalThis.requestIdleCallback ?? globalThis.requestAnimationFrame;
@@ -17,7 +28,5 @@ function setBackgroundInterval(fn, time) {
     });
   }, time);
 }
-
-
   setBackgroundInterval(()=>[...document.querySelectorAll(`a[href="//${location.host}"]`)??[]]?.find?.(x=>`${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href',`${location.origin}/wiki/Main_Page`),100);
 })();
