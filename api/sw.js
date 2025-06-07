@@ -1,11 +1,17 @@
 (() => {
-  
+  let cheese = caches.open("cheese");
   const cache = {
     set:(req,res)=>{
       const resClone = res?.clone?.();
-      return (async()=>(await caches.open("cheese")).put(req,resClone))();
+      return (async()=>{
+        if(cheese instanceof Promise)cheese = await cheese;
+        return cheese.put(req,resClone)
+      })();
     },
-    get:async(req,res)=>(await (await caches.open("cheese")).match(req))?.clone?.()
+    get:async(req,res)=>{
+      if(cheese instanceof Promise)cheese = await cheese;
+      return (await cheese.match(req))?.clone?.();
+    }
   };
   
   async function then() { };
