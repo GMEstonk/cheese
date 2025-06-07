@@ -116,7 +116,9 @@ async function onRequest(req, res) {
     for (const host of replaceHosts) {
       resBody = resBody.replace(RegExp(host, "gi"), thisHost);
     }
-    resBody = resBody.replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script>').replaceAll('chatList.length','(chatList||[]).length');
+    resBody = resBody.replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script>')
+      .replaceAll('chatList.length','(chatList||[]).length')
+      .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
     res.end(resBody);
   } else {
     res.end(Buffer.from(await response.clone().arrayBuffer()));
