@@ -40,6 +40,13 @@ async function onRequest(req, res) {
   req.headers.host = hostTarget;
   req.headers.referer = hostTarget;
 
+
+  if(req.url.endsWith('patchy.js')){
+    res.setHeader('content-type','text/javascript');
+    return res.end(await(await tfetch('https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/patchy.js')).text());
+  }
+
+  
   /* start reading the body of the request*/
   let bdy = [];
   req.on("data", (chunk) => {
