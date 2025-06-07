@@ -15,7 +15,7 @@
   const dateParse = Date.parse;
   Date.parse = function parse(){
     try{
-      return dateParse(...arguments);
+      return dateParse(...arguments) || new Date();
     }catch{
       return new Date();
     }
