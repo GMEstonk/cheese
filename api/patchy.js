@@ -19,5 +19,5 @@ function setBackgroundInterval(fn, time) {
 }
 
 
-  setBackgroundInterval(()=>[...document.querySelectorAll(`a[href="${location.origin}"]`)??[]]find?.(x=>`${x?.innerText}`.toLowerCase().includes('pokéheroes wiki'))?.setAttribute?.('href',`${location.origin}/wiki/Main_Page`),100);
+  setBackgroundInterval(()=>[...document.querySelectorAll(`a[href^="${location.origin}"]`)??[]]find?.(x=>`${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href',`${location.origin}/wiki/Main_Page`),100);
 })();
