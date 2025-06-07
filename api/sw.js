@@ -14,7 +14,7 @@
     }
   };
   
-  async function then() { };
+  const then = Object.freeze(async()=>{});
 
   function awaitUntil(event, promise) {
     event.waitUntil((async () => {
