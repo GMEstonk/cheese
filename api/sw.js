@@ -35,7 +35,7 @@
         }else{
           cacheRes = await fetch(event.request);
         }
-        if(cacheRes.ok){
+        if(cacheRes.ok && cacheRes.body && !cacheRes.bodyUsed){
           cache.set(event.request.url,cacheRes);
         }
         return cacheRes;
