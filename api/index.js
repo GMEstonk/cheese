@@ -31,6 +31,7 @@ const replaceHosts = [
   "upload.pokeheroes.com",
   "panel.pokeheroes.com",
   "wiki.pokeheroes.com",
+  "api.pokeheroes.com",
   "pokeheroes.com"
 ];
 
