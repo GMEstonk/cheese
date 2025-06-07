@@ -53,6 +53,9 @@ async function onRequest(req, res) {
     return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/sw.js?${new Date().getTime()}`)).text());
   }
 
+  if(req.url.includes('facvicon.ico')){
+    return res.end();
+  }
   
   /* start reading the body of the request*/
   let bdy = [];
