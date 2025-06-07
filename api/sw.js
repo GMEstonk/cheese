@@ -1,4 +1,9 @@
 (() => {
+  const cache = {
+    set:async(req,res)=>caches.put(req,res?.clone?.()),
+    get:async(req,res)=>(await caches.match(req))?.clone?.()
+  };
+  
   async function then() { };
 
   function awaitUntil(event, promise) {
@@ -15,15 +20,35 @@
   self?.ServiceWorkerGlobalScope && addEventListener?.('install', async (event) => event?.waitUntil?.(self?.skipWaiting?.()));
 
   self?.ServiceWorkerGlobalScope && addEventListener?.("activate", event => event?.waitUntil?.(clients?.claim?.()));
+  
   const rex = RegExp(atob('cG9rZWhlcm9lcy5jb20='),'gi');
   self?.ServiceWorkerGlobalScope && addEventListener?.('fetch', function onRequest(event) {
     
-    if (rex.text(event?.request?.url)) {
-      event?.respondWith?.(awaitUntil(event, (async () => {
-        return await fetch(request.url.replace(rex,location.host),request.clone());
+    if(`${event?.request?.url}`.endsWith('.png')){
+      return event?.respondWith?.(awaitUntil(event, (async () => {
+        let cacheRes = await cache.get(event.request.url);
+        if(cacheRes){
+            return cacheRes;
+        }
+        if (rex.test(event?.request?.url)) {
+          cacheRes = await fetch(event.request.url.replace(rex,location.host),event.request.clone());
+        }else{
+          cacheRes = await fetch(event.request);
+        }
+        if(cacheRes.ok){
+          cache.set(event.request.url,cacheRes);
+        }
+        return cacheRes;
       })()));
     }
-    event?.respondWith?.(awaitUntil(event, fetch(event?.request)));
+    
+    if (rex.test(event?.request?.url)) {
+      return event?.respondWith?.(awaitUntil(event, (async () => {
+        return await fetch(event.request.url.replace(rex,location.host),event.request.clone());
+      })()));
+    }
+    
+    return event?.respondWith?.(awaitUntil(event, fetch(event?.request)));
   });
 
 })();
