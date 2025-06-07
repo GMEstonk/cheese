@@ -35,7 +35,8 @@
   self?.ServiceWorkerGlobalScope && addEventListener?.('fetch', function onRequest(event) {
     const req = event?.request;
     const reqURL = String(req?.url);
-    if(reqURL.endsWith('.png')){
+    const path = String(new URL(reqURL).pathname).toLowerCase();
+    if(['.png','.svg'].some(x=>path.endsWith(x))){
       return event.respondWith(awaitUntil(event, (async () => {
         let cacheRes = await cache.get(reqURL);
         if(cacheRes){
