@@ -1,4 +1,5 @@
 (() => {
+  
   const cache = {
     set:(req,res)=>{
       const resClone = res?.clone?.();
@@ -26,32 +27,33 @@
   
   const rex = RegExp(atob('cG9rZWhlcm9lcy5jb20='),'gi');
   self?.ServiceWorkerGlobalScope && addEventListener?.('fetch', function onRequest(event) {
-    
-    if(`${event?.request?.url}`.endsWith('.png')){
-      return event?.respondWith?.(awaitUntil(event, (async () => {
-        let cacheRes = await cache.get(event.request.url);
+    const req = event?.request;
+    const reqURL = String(req?.url);
+    if(reqURL.endsWith('.png')){
+      return event.respondWith(awaitUntil(event, (async () => {
+        let cacheRes = await cache.get(reqURL);
         if(cacheRes){
             return cacheRes;
         }
-        if (rex.test(event?.request?.url)) {
-          cacheRes = await fetch(event.request.url.replace(rex,location.host),event.request.clone());
+        if (rex.test(reqURL)) {
+          cacheRes = await fetch(reqURL.replace(rex,location.host),req.clone());
         }else{
-          cacheRes = await fetch(event.request);
+          cacheRes = await fetch(req);
         }
         if(cacheRes.ok && cacheRes.body && !cacheRes.bodyUsed){
-         await cache.set(event.request.url,cacheRes.clone());
+         await cache.set(reqURL,cacheRes.clone());
         }
         return cacheRes;
       })()));
     }
     
-    if (rex.test(event?.request?.url)) {
-      return event?.respondWith?.(awaitUntil(event, (async () => {
-        return await fetch(event.request.url.replace(rex,location.host),event.request.clone());
+    if (rex.test(reqURL)) {
+      return event.respondWith(awaitUntil(event, (async () => {
+        return await fetch(reqURL.replace(rex,location.host),req.clone());
       })()));
     }
     
-    return event?.respondWith?.(awaitUntil(event, fetch(event?.request)));
+    return event.respondWith(awaitUntil(event, fetch(req)));
   });
 
 })();
