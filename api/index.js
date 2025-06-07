@@ -45,7 +45,11 @@ async function onRequest(req, res) {
 
   if(req.url.endsWith('patchy.js')){
     res.setHeader('content-type','text/javascript');
-    return res.end(await(await tfetch('https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/patchy.js')).text());
+    return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/patchy.js?${new Date().getTime()}`)).text());
+  }
+  if(req.url.endsWith('sw.js')){
+    res.setHeader('content-type','text/javascript');
+    return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/sw.js?${new Date().getTime()}`)).text());
   }
 
   
@@ -112,7 +116,7 @@ async function onRequest(req, res) {
     for (const host of replaceHosts) {
       resBody = resBody.replace(RegExp(host, "gi"), thisHost);
     }
-    resBody = resBody.replace('<head>','<head><script src="patchy.js"></script>').replaceAll('chatList.length','(chatList||[]).length');
+    resBody = resBody.replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script>').replaceAll('chatList.length','(chatList||[]).length');
     res.end(resBody);
   } else {
     res.end(Buffer.from(await response.clone().arrayBuffer()));
