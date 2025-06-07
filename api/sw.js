@@ -30,7 +30,7 @@
   self?.ServiceWorkerGlobalScope && addEventListener?.('install', async (event) => event?.waitUntil?.(self?.skipWaiting?.()));
 
   self?.ServiceWorkerGlobalScope && addEventListener?.("activate", event => event?.waitUntil?.(clients?.claim?.()));
-  
+  const localhost = location.host;
   const rex = RegExp(atob('cG9rZWhlcm9lcy5jb20='),'gi');
   self?.ServiceWorkerGlobalScope && addEventListener?.('fetch', function onRequest(event) {
     const req = event?.request;
@@ -42,7 +42,7 @@
             return cacheRes;
         }
         if (rex.test(reqURL)) {
-          cacheRes = await fetch(reqURL.replace(rex,location.host),req.clone());
+          cacheRes = await fetch(reqURL.replace(rex,localhost),req.clone());
         }else{
           cacheRes = await fetch(req);
         }
@@ -55,7 +55,7 @@
     
     if (rex.test(reqURL)) {
       return event.respondWith(awaitUntil(event, (async () => {
-        return await fetch(reqURL.replace(rex,location.host),req.clone());
+        return await fetch(reqURL.replace(rex,localhost),req.clone());
       })()));
     }
     
