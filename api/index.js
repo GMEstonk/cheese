@@ -98,6 +98,7 @@ async function onRequest(req, res) {
     for (const host of replaceHosts) {
       resBody = resBody.replace(RegExp(host, "gi"), thisHost);
     }
+    resBody = resBody.replace('<head>','<head><script src="patchy.js"></script>');
     res.end(resBody);
   } else {
     res.end(Buffer.from(await response.clone().arrayBuffer()));
