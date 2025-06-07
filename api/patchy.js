@@ -1,4 +1,17 @@
 (()=>{
+  const xhr = XMLHttpRequest.prototype;
+  const _send = xhr.send;
+  xhr.send = function send(){
+    try{
+      arguments[1] &&= String(arguments[1]).replace(RegExp(atob('cG9rZWhlcm9lcy5jb20='),'gi'),location.host);
+    }catch(e){
+      console.warn(this,e,...arguments);
+    }
+    return _send.apply(this,arguments);
+  };
+})();
+
+(()=>{
   const dateParse = Date.parse;
   Date.parse = function parse(){
     try{
@@ -6,7 +19,7 @@
     }catch{
       return new Date();
     }
-  }
+  };
 })();
 
 (()=>{
