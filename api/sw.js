@@ -39,7 +39,7 @@
           cacheRes = await fetch(event.request);
         }
         if(cacheRes.ok && cacheRes.body && !cacheRes.bodyUsed){
-          cache.set(event.request.url,cacheRes);
+         await cache.set(event.request.url,cacheRes.clone());
         }
         return cacheRes;
       })()));
