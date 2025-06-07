@@ -1,6 +1,9 @@
 (() => {
   const cache = {
-    set:async(req,res)=>(await caches.open("cheese")).put(req,res?.clone?.()),
+    set:async(req,res)=>{
+      const resClone = res?.clone?.();
+      return (await caches.open("cheese")).put(req,resClone);
+    },
     get:async(req,res)=>(await (await caches.open("cheese")).match(req))?.clone?.()
   };
   
