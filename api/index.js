@@ -139,11 +139,11 @@ async function onRequest(req, res) {
     res.setHeader('content-encoding','gzip');
     res.end(Buffer.from(await gzip(resBody)));
   } else {
-    const resBody = response.clone().body;
+    const resBody = response.clone().body?.pipeThrough?.(new CompressionStream("gzip"));
+    res.setHeader('content-encoding','gzip');
     for await (const chunk of resBody??[]){
       res.write(chunk);
     }
     res.end();
   }
-  console.log("Outgoing Response: ",res.getHeader('set-cookie'));
 }
