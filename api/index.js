@@ -30,6 +30,7 @@ async function tfetch() {
     try{
     const resp = await tfetch(url);
     const body = resp.body.pipeThrough(new CompressionStream("gzip"));
+    serverRes.setHeader('content-encoding','gzip');
     for await (const chunk of body){
       serverRes.write(chunk);
     }
