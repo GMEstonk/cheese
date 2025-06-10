@@ -145,7 +145,7 @@ async function onRequest(req, res) {
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
     res.setHeader('content-encoding','gzip');
-    res.end(Buffer.from(await gzip(resBody));
+    res.end(Buffer.from(await gzip(resBody)));
   } else {
     const resBody = response.clone().body;
     for await (const chunk of resBody??[]){
