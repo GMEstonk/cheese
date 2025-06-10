@@ -1,7 +1,10 @@
-html{
+html[location-host*="cheese"]{
+  
   filter:hue-rotate(-90deg);
+  
+  img:not([src*="header_img"]){
+    filter:hue-rotate(90deg);
+  }
+  
 }
 
-img[src$="png"i]{
-  filter:hue-rotate(90deg);
-}
