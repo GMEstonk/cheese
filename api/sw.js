@@ -39,6 +39,7 @@
       && (`${req.headers.get('referer')}`.includes('gc_hangman') 
           && !reqURL.includes('gc_hangman'))){
       return event.respondWith(awaitUntil(event, (async () => {
+        console.warn(req);
         let cacheRes = await cache.get(reqURL);
         if(cacheRes){
             return cacheRes;
