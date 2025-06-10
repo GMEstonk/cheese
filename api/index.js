@@ -128,8 +128,7 @@ async function onRequest(req, res) {
   response.headers.forEach((value, key) => res.setHeader(key, value));
   new Headers(nocacheHeaders).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
-  if (!`${response.headers.get("content-type")}`.match(/image|video|audio/i)) {
-    if(!req.url.includes('.svg'))res.removeHeader("content-encoding");
+  if (/html|script/i.test(`${response.headers.get("content-type")}`)) {
     let resBody = await response.clone().text();
     for (const host of replaceHosts) {
       resBody = resBody.replace(RegExp(host, "gi"), thisHost);
