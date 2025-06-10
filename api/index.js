@@ -1,4 +1,5 @@
 const urlMap = new Map();
+const { Readable } = require("stream");
 
 const nocacheHeaders = {
   "Cache-Control": "no-cache",
