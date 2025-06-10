@@ -48,9 +48,15 @@ async function onRequest(req, res) {
     res.setHeader('content-type','text/javascript');
     return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/patchy.js?${new Date().getTime()}`)).text());
   }
+  
   if(req.url.endsWith('sw.js')){
     res.setHeader('content-type','text/javascript');
     return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/sw.js?${new Date().getTime()}`)).text());
+  }
+
+  if(req.url.endsWith('viz.css')){
+    res.setHeader('content-type','text/css');
+    return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/viz.css?${new Date().getTime()}`)).text());
   }
 
   if(req.url.includes('facvicon.ico')){
@@ -120,7 +126,7 @@ async function onRequest(req, res) {
     for (const host of replaceHosts) {
       resBody = resBody.replace(RegExp(host, "gi"), thisHost);
     }
-    resBody = resBody.replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script>')
+    resBody = resBody.replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
     res.end(resBody);
