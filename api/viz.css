@@ -8,3 +8,6 @@ html[location-host*="cheese"]{
   
 }
 
+html[window-top="false"] :not(:has(#textbar),#textbar,#textbar *){
+		display:none !important;
+}
