@@ -18,7 +18,7 @@
         }, time);
     };
 
-  const updateAttribute = (element,key,value) => (element?.getAttribute?.(key) != value) && element?.setAttribute?.(key,value);
+    const updateAttribute = (element, key, value) => (element?.getAttribute?.(key) != value) && element?.setAttribute?.(key, value);
 
     (() => {
         const _eval = eval;
@@ -67,12 +67,13 @@
     })();
 
     (() => {
+        if (window != window.top) return;
         let bkInterval;
-        bkInterval = setBackgroundInterval(() =>{
+        bkInterval = setBackgroundInterval(() => {
             [...document.querySelectorAll(`a[href="//${location.host}"]`) ?? []]?.find?.(x => `${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href', `${location.origin}/wiki/Main_Page`);
-            if(document.querySelector('a[href*="/wiki/Main_Page"]')){
+            if (document.querySelector('a[href*="/wiki/Main_Page"]')) {
                 clearInterval(bkInterval);
-                console.log(bkInterval,'Wiki Link fixed');
+                console.log(bkInterval, 'Wiki Link fixed');
             }
         }, 200);
     })();
@@ -88,7 +89,7 @@
 
             for (const prop in html) {
                 if (html[prop] != null && String(html[prop]).length && !/function|object/.test(html[prop]) && !/\n/.test(html[prop])) {
-                    updateAttribute(html,`html-${toKebabCase(prop)}`.replace(/[-]+/g, '-'), html[prop]);
+                    updateAttribute(html, `html-${toKebabCase(prop)}`.replace(/[-]+/g, '-'), html[prop]);
                 }
             }
 
@@ -96,7 +97,7 @@
                 const prefix = `${obj?.constructor?.name}`.replace(/^html/i, '').toLowerCase();
                 for (const prop in obj) {
                     if (obj[prop] != null && String(obj[prop]).length && !/function|object/.test(obj[prop])) {
-                        updateAttribute(html,`${toKebabCase(prefix)}-${toKebabCase(prop)}`.replace(/[-]+/g, '-'), obj[prop]);
+                        updateAttribute(html, `${toKebabCase(prefix)}-${toKebabCase(prop)}`.replace(/[-]+/g, '-'), obj[prop]);
                     }
                 }
             }
@@ -104,20 +105,69 @@
             const loc = new URL(location.href);
             for (const [k, v] of loc.searchParams) {
                 if (k && v) {
-                    updateAttribute(html,`location-search-params-${toKebabCase(k)}`.replace(/[-]+/g, '-'), v);
+                    updateAttribute(html, `location-search-params-${toKebabCase(k)}`.replace(/[-]+/g, '-'), v);
                 }
             }
 
             const cookies = new URLSearchParams(`?${`${document?.cookie}`.split('; ').join('&')}`);
             for (const [k, v] of cookies) {
                 if (k && v) {
-                    updateAttribute(html,`cookie-${toKebabCase(k)}`.replace(/[-]+/g, '-'), v);
+                    updateAttribute(html, `cookie-${toKebabCase(k)}`.replace(/[-]+/g, '-'), v);
                 }
             }
-            html.setAttribute('window-top',window == window.top);
+            html.setAttribute('window-top', window == window.top);
         }
         cssHelpers();
-     // setBackgroundInterval(cssHelpers,100);
+        // setBackgroundInterval(cssHelpers,100);
+    })();
+
+    (() => {
+        globalThis.requestIdleCallback ??= requestAnimationFrame;
+
+        const DOMInteractive = (fn) => {
+            fn ??= () => {};
+            if ((globalThis.document?.readyState == 'complete') || (globalThis.document?.readyState == 'interactive')) {
+                return fn();
+            }
+            return new Promise((resolve) => {
+                (globalThis.document || globalThis).addEventListener("DOMContentLoaded", () => {
+                    try {
+                        resolve(fn());
+                    } catch (e) {
+                        resolve(e);
+                    }
+                });
+            });
+        };
+
+        if (window === window.top && location.href.includes('gts_my_trades')) {
+            DOMInteractive(() => {
+                ['gts_my_trades', 'gts_search?type=0', 'gts_my_offers'].forEach(x => {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = `${location.origin}/${x}`;
+                    Object.assign(iframe.style, {
+                        width: 0,
+                        height: 0,
+                        opacity: 0,
+                    });
+                    document.body.appendChild(iframe);
+                });
+            });
+        }
+
+
+        if (window != window.top && ['gts_my_trades', 'gts_search?type=0', 'gts_my_offers'].some(x => location.href.includes(x))) {
+
+            DOMInteractive(() => {
+                window.top.document.querySelector('#sidebar')?.remove?.();
+                const textBar = document.querySelectorAll('#textbar')
+                    (window.top.document.querySelector('#content')?.style ?? {}).flexDirection = 'column';
+                window.top.document.querySelector('#content')?.appendChild?.(textBar);
+            });
+
+        }
+
+
     })();
 
 })();
