@@ -161,6 +161,7 @@
         
         		DOMInteractive(()=>{
         			window.top.document.querySelector('#sidebar')?.remove?.();
+                    document.querySelector('#textbar>h1')?.remove?.();
         			const textBar = document.querySelector('#textbar');
         			(window.top.document.querySelector('#content')?.style??{}).flexDirection = 'column';
         			window.top.document.querySelector('#content')?.appendChild?.(textBar);
