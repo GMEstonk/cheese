@@ -156,14 +156,14 @@
         }
 
 
-        if (window != window.top && ['gts_my_trades', 'gts_search?type=0', 'gts_my_offers'].some(x => location.href.includes(x))) {
+        if (window != window.top && ['gts_search?type=0', 'gts_my_offers'].some(x => location.href.includes(x))) {
 
-            DOMInteractive(() => {
-                window.top.document.querySelector('#sidebar')?.remove?.();
-                const textBar = document.querySelectorAll('#textbar')
-                    (window.top.document.querySelector('#content')?.style ?? {}).flexDirection = 'column';
-                window.top.document.querySelector('#content')?.appendChild?.(textBar);
-            });
+    		DOMInteractive(()=>{
+    			window.top.document.querySelector('#sidebar')?.remove?.();
+    			const textBar = document.querySelector('#textbar');
+    			(window.top.document.querySelector('#content')?.style??{}).flexDirection = 'column';
+    			window.top.document.querySelector('#content')?.appendChild?.(textBar);
+    		});
 
         }
 
