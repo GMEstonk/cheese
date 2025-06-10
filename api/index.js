@@ -1,6 +1,7 @@
 const urlMap = new Map();
 const { Readable } = require("stream");
-
+const http = require("http");
+const Buffer = require("buffer").Buffer;
 const gzip = x =>  new Response(new Response(x).body.pipeThrough(new CompressionStream("gzip"))).arrayBuffer();
 
 const nocacheHeaders = {
@@ -38,9 +39,6 @@ async function tfetch() {
       serverRes.end();
     }
   }
-
-const http = require("http");
-const Buffer = require("buffer").Buffer;
 
 const hostTarget = "pokeheroes.com";
 const replaceHosts = [
@@ -90,14 +88,11 @@ async function onRequest(req, res) {
       method: req.method,
       headers: req.headers,
     },nocacheHeaders);
-  /* fetch throws an error if you send a body with a GET request even if it is empty */
+
   if (body && !req.method.match(/GET|HEAD/)) {
     options.body = body,
     options.duplex = 'half';
   }
-  /* finish copying over the other parts of the request */
-
-  /* fetch from your desired target */
   let request = new Request(urlMap.get(req.url) ?? `https://${hostTarget}${req.url}`, options);
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
   request.headers.append('cookie','username=Substitute');
@@ -129,14 +124,11 @@ async function onRequest(req, res) {
     urlMap.set(req.url,response.url);
   }
   
-  /* copy over response headers*/
   response.headers.forEach((value, key) => res.setHeader(key, value));
-  new Map(Object.entries(nocacheHeaders)).forEach((value, key) => res.setHeader(key, value));
+  new Headers(nocacheHeaders).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
-  /* check to see if the response is not a text format */
   if (!`${response.headers.get("content-type")}`.match(/image|video|audio/i)) {
     if(!req.url.includes('.svg'))res.removeHeader("content-encoding");
-    /* Copy over target response and return */
     let resBody = await response.clone().text();
     for (const host of replaceHosts) {
       resBody = resBody.replace(RegExp(host, "gi"), thisHost);
