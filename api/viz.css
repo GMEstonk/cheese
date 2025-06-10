@@ -19,5 +19,10 @@ html[location-host*="chicken"]{
 }
 
 html[window-top="false"] :not(:has(#textbar),#textbar,#textbar *){
-		display:none !important;
+	display:none !important;
+}
+
+
+html[location-href*="gts_my_trades"] #sidebar{
+	display:none !important;
 }
