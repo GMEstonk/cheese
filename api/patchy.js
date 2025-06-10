@@ -66,5 +66,20 @@ function setBackgroundInterval(fn, time) {
   setBackgroundInterval(()=>[...document.querySelectorAll(`a[href="//${location.host}"]`)??[]]?.find?.(x=>`${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href',`${location.origin}/wiki/Main_Page`),100);
 })();
 
-const toKebabCase = x =>
-  String(x).replace(/[A-Z]/g, y => `-${y.toLowerCase()}`).replace(/[^a-z0-9-]/g,'');
+(()=>{
+  const html = document.firstElementChild;
+  const toKebabCase = x =>
+    String(x).replace(/[A-Z]/g, y => `-${y.toLowerCase()}`).replace(/[^a-z0-9-]/g,'');
+  const isString = str => str instanceof String || [typeof str,str?.constructor?.name].some(s=>/^string$/i.test(s));
+  for(const obj of [document,window,location,navigator]){
+    const prefix = `${obj?.constructor?.name}`.replace(/^html/i,'').toLowerCase();
+    for(const prop in obj){
+      if(obj[prop]&&isString(obj[prop])){
+        html.setAttribute(`${prefix}-${toKebabCase(prop)}`,obj[prop]);
+      }
+    }
+  }
+})();
+
+
+
