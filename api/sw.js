@@ -36,7 +36,7 @@
     const reqURL = String(req?.url);
     const path = String(new URL(reqURL).pathname).toLowerCase();
     if(['.png','.svg'].some(x=>path.endsWith(x)) 
-      && (`${req.headers.get('referer')}`.includes('gc_hangman') 
+      || (`${req.headers.get('referer')}`.includes('gc_hangman') 
           && !reqURL.includes('gc_hangman'))){
       return event.respondWith(awaitUntil(event, (async () => {
         console.warn(req);
