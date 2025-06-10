@@ -1,6 +1,8 @@
 const urlMap = new Map();
 const { Readable } = require("stream");
 
+const gzip = x =>  new Response(new Response(x).body.pipeThrough(new CompressionStream("gzip"))).arrayBuffer();
+
 const nocacheHeaders = {
   "Cache-Control": "no-cache",
   "Cache-Control-": "no-cache",
@@ -26,9 +28,10 @@ async function tfetch() {
   async function streamFromURL(url,serverRes){
     try{
     const resp = await tfetch(url);
-      for await (const chunk of resp.body??[]){
-        serverRes.write(chunk);
-      }
+    const body = resp.body.pipeThrough(new CompressionStream("gzip"));
+    for await (const chunk of body){
+      serverRes.write(chunk);
+    }
     }catch(e){
       console.warn(e,...arguments);
     }finally{
@@ -141,7 +144,8 @@ async function onRequest(req, res) {
     resBody = resBody.replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
-    res.end(resBody);
+    res.setHeader('content-encoding','gzip');
+    res.end(Buffer.from(await gzip(resBody));
   } else {
     const resBody = response.clone().body;
     for await (const chunk of resBody??[]){
