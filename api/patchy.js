@@ -87,7 +87,7 @@
             const isString = str => str instanceof String || [typeof str, str?.constructor?.name].some(s => /^string$/i.test(s));
 
             for (const prop in html) {
-                if (html[prop] != null && String(obj[prop]).length && !/function|object/.test(html[prop]) && !/\n/.test(html[prop])) {
+                if (html[prop] != null && String(html[prop]).length && !/function|object/.test(html[prop]) && !/\n/.test(html[prop])) {
                     updateAttribute(html,`html-${toKebabCase(prop)}`.replace(/[-]+/g, '-'), html[prop]);
                 }
             }
