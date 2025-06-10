@@ -22,6 +22,19 @@ async function tfetch() {
   }
 }
 
+  async function streamFromURL(url,serverRes){
+    try{
+    const resp = await tfetch(url);
+      for await (const chunk of resp.body??[]){
+        serverRes.write(chunk);
+      }
+    }catch(e){
+      console.warn(e,...arguments);
+    }finally{
+      serverRes.end();
+    }
+  }
+
 const http = require("http");
 const Buffer = require("buffer").Buffer;
 
@@ -46,17 +59,17 @@ async function onRequest(req, res) {
 
   if(req.url.endsWith('patchy.js')){
     res.setHeader('content-type','text/javascript');
-    return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/patchy.js?${new Date().getTime()}`)).text());
+    return streamFromURL(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/patchy.js?${new Date().getTime()}`,res);
   }
   
   if(req.url.endsWith('sw.js')){
     res.setHeader('content-type','text/javascript');
-    return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/sw.js?${new Date().getTime()}`)).text());
+    return streamFromURL(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/sw.js?${new Date().getTime()}`,res);
   }
 
   if(req.url.endsWith('viz.css')){
     res.setHeader('content-type','text/css');
-    return res.end(await(await tfetch(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/viz.css?${new Date().getTime()}`)).text());
+    return streamFromURL(`https://raw.githubusercontent.com/GMEstonk/cheese/refs/heads/main/api/viz.css?${new Date().getTime()}`,res);
   }
 
   if(req.url.includes('facvicon.ico')){
@@ -64,21 +77,19 @@ async function onRequest(req, res) {
   }
   
   /* start reading the body of the request*/
-  let bdy = [];
-  req.on("data", (chunk) => {
-    bdy = [...bdy,...chunk];
-  });
-  await new Promise((resolve) => {
-    req.on("end", resolve);
-  });
+  let body;
+  if(req.closed === false){
+     body = Readable.toWeb(req);
+  }
   console.log('Body: ',bdy);
   const options = Object.assign({
       method: req.method,
       headers: req.headers,
     },nocacheHeaders);
   /* fetch throws an error if you send a body with a GET request even if it is empty */
-  if (!req.method.match(/GET|HEAD/)) {
-    options.body = new Uint8Array(bdy);
+  if (body && !req.method.match(/GET|HEAD/)) {
+    options.body = body,
+    options.duplex = 'half';
   }
   /* finish copying over the other parts of the request */
 
@@ -131,7 +142,11 @@ async function onRequest(req, res) {
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
     res.end(resBody);
   } else {
-    res.end(Buffer.from(await response.clone().arrayBuffer()));
+    const resBody = response.clone().body;
+    for await (const chunk of resBody??[]){
+      res.write(chunk);
+    }
+    res.end();
   }
   console.log("Outgoing Response: ",res.getHeader('set-cookie'));
 }
