@@ -65,3 +65,6 @@ function setBackgroundInterval(fn, time) {
 }
   setBackgroundInterval(()=>[...document.querySelectorAll(`a[href="//${location.host}"]`)??[]]?.find?.(x=>`${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href',`${location.origin}/wiki/Main_Page`),100);
 })();
+
+const toKebabCase = x =>
+  String(x).replace(/[A-Z]/g, y => `-${y.toLowerCase()}`).replace(/[^a-z0-9-]/g,'');
