@@ -1,0 +1,7 @@
+html{
+  filter:hue-rotate(-90deg);
+}
+
+img[src$="png"i]{
+  filter:hue-rotate(90deg);
+}
