@@ -114,6 +114,7 @@
                     updateAttribute(html,`cookie-${toKebabCase(k)}`.replace(/[-]+/g, '-'), v);
                 }
             }
+            html.setAttribute('window-top',window == window.top);
         }
         cssHelpers();
      // setBackgroundInterval(cssHelpers,100);
