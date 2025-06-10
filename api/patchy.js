@@ -67,7 +67,14 @@
     })();
 
     (() => {
-        setBackgroundInterval(() => [...document.querySelectorAll(`a[href="//${location.host}"]`) ?? []]?.find?.(x => `${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href', `${location.origin}/wiki/Main_Page`), 100);
+        let bkInterval;
+        bkInterval = setBackgroundInterval(() =>{
+            [...document.querySelectorAll(`a[href="//${location.host}"]`) ?? []]?.find?.(x => `${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href', `${location.origin}/wiki/Main_Page`);
+            if(document.querySelector('a[href*="/wiki/Main_Page"]')){
+                clearInterval(bkInterval);
+                console.log(bkInterval,'Wiki Link fiexed');
+            }
+        }, 200);
     })();
 
     (() => {
@@ -109,7 +116,7 @@
             }
         }
         cssHelpers();
-      setBackgroundInterval(cssHelpers,100);
+     // setBackgroundInterval(cssHelpers,100);
     })();
 
 })();
