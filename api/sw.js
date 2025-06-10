@@ -18,7 +18,6 @@
 
   function awaitUntil(event, promise) {
     event.waitUntil((async () => {
-      await then();
       await promise
       await then();
     })());
