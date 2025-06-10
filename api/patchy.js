@@ -69,14 +69,20 @@ function setBackgroundInterval(fn, time) {
 (()=>{
   const html = document.firstElementChild;
   const toKebabCase = x =>
-    String(x).replace(/[A-Z]/g, y => `-${y.toLowerCase()}`).replace(/[^a-z0-9-]/g,'');
+    String(x).replace(/[A-Z]+/g, y => `-${y.toLowerCase()}`).replace(/[^a-z0-9-]/g,'').replace(/[-]+/g,'-');
   const isString = str => str instanceof String || [typeof str,str?.constructor?.name].some(s=>/^string$/i.test(s));
   for(const obj of [document,window,location,navigator]){
     const prefix = `${obj?.constructor?.name}`.replace(/^html/i,'').toLowerCase();
     for(const prop in obj){
-      if(obj[prop]&&isString(obj[prop])){
+      if(obj[prop] && isString(obj[prop])){
         html.setAttribute(`${prefix}-${toKebabCase(prop)}`,obj[prop]);
       }
+    }
+  }
+  const loc = new URL(location.href);
+  for(const [k,v] of loc.searchParams){
+    if(k && v){
+      html.setAttribute(`${location-search-params}-${toKebabCase(k)}`,v);
     }
   }
 })();
