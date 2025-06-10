@@ -82,7 +82,7 @@ async function onRequest(req, res) {
   if(req.closed === false){
      body = Readable.toWeb(req);
   }
-  console.log('Body: ',bdy);
+  console.log('Body: ',body);
   const options = Object.assign({
       method: req.method,
       headers: req.headers,
