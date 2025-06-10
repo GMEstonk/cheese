@@ -72,7 +72,7 @@
             [...document.querySelectorAll(`a[href="//${location.host}"]`) ?? []]?.find?.(x => `${x?.innerText}`.toLowerCase().includes('wiki'))?.setAttribute?.('href', `${location.origin}/wiki/Main_Page`);
             if(document.querySelector('a[href*="/wiki/Main_Page"]')){
                 clearInterval(bkInterval);
-                console.log(bkInterval,'Wiki Link fiexed');
+                console.log(bkInterval,'Wiki Link fixed');
             }
         }, 200);
     })();
