@@ -140,32 +140,35 @@
             });
         };
 
-        if (window === window.top && location.href.includes('gts_my_trades')) {
-            DOMInteractive(() => {
-                ['gts_my_trades', 'gts_search?type=0', 'gts_my_offers'].forEach(x => {
-                    const iframe = document.createElement('iframe');
-                    iframe.src = `${location.origin}/${x}`;
-                    Object.assign(iframe.style, {
-                        width: 0,
-                        height: 0,
-                        opacity: 0,
-                    });
-                    document.body.appendChild(iframe);
-                });
-            });
+        if(window === window.top && ['gts_my_trades','gts_search?type=0','gts_my_offers'].some(x=>location.href.includes(x))){
+        	DOMInteractive(()=>{
+        		['gts_my_trades','gts_search?type=0','gts_my_offers'].forEach(x=>{
+        			if(location.href.includes(x))return;
+        			const iframe = document.createElement('iframe');
+        			iframe.src = `${location.origin}/${x}`;
+        			Object.assign(iframe.style,{
+        				width : 0,
+        				height :0,
+        				opacity : 0,
+        			});
+        			document.body.appendChild(iframe);
+        		});
+        	});
+        }
+        
+        
+        if(window != window.top && ['gts_my_trades','gts_search?type=0','gts_my_offers'].some(x=>location.href.includes(x))){
+        
+        		DOMInteractive(()=>{
+        			window.top.document.querySelector('#sidebar')?.remove?.();
+        			const textBar = document.querySelector('#textbar');
+        			(window.top.document.querySelector('#content')?.style??{}).flexDirection = 'column';
+        			window.top.document.querySelector('#content')?.appendChild?.(textBar);
+        		});
+        		
         }
 
 
-        if (window != window.top && ['gts_search?type=0', 'gts_my_offers'].some(x => location.href.includes(x))) {
-
-    		DOMInteractive(()=>{
-    			window.top.document.querySelector('#sidebar')?.remove?.();
-    			const textBar = document.querySelector('#textbar');
-    			(window.top.document.querySelector('#content')?.style??{}).flexDirection = 'column';
-    			window.top.document.querySelector('#content')?.appendChild?.(textBar);
-    		});
-
-        }
 
 
     })();
