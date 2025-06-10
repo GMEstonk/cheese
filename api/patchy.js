@@ -87,7 +87,7 @@
             const isString = str => str instanceof String || [typeof str, str?.constructor?.name].some(s => /^string$/i.test(s));
 
             for (const prop in html) {
-                if (html[prop] && isString(html[prop]) && !/\n/.test(html[prop])) {
+                if (html[prop] && !/function|object/.test(html[prop]) && !/\n/.test(html[prop])) {
                     updateAttribute(html,`html-${toKebabCase(prop)}`.replace(/[-]+/g, '-'), html[prop]);
                 }
             }
@@ -95,7 +95,7 @@
             for (const obj of [document, window, location, navigator, clientInformation.userAgentData]) {
                 const prefix = `${obj?.constructor?.name}`.replace(/^html/i, '').toLowerCase();
                 for (const prop in obj) {
-                    if (obj[prop] && isString(obj[prop])) {
+                    if (obj[prop] !/function|object/.test(obj[prop])) {
                         updateAttribute(html,`${toKebabCase(prefix)}-${toKebabCase(prop)}`.replace(/[-]+/g, '-'), obj[prop]);
                     }
                 }
