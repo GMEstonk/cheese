@@ -1,4 +1,4 @@
-html[location-host*="cheese"]{
+html[location-host*="cheese"][window-top="true"]{
   
   filter:hue-rotate(-90deg);
   
@@ -8,7 +8,7 @@ html[location-host*="cheese"]{
   
 }
 
-html[location-host*="chicken"]{
+html[location-host*="chicken"][window-top="true"]{
   
   filter:hue-rotate(45deg);
   
