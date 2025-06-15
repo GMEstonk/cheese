@@ -131,7 +131,7 @@ async function onRequest(req, res) {
   res.removeHeader("content-length");
   if (/html|script|xml/i.test(`${response.headers.get("content-type")}`)) {
     let resBody = response.clone().body;
-    res.setHeader('content-encoding','gzip');
+    //res.setHeader('content-encoding','gzip');
     const decoder = new TextDecoder();
     for await(const chunk of resBody??[]){
       let resChunk = decoder.decode(chunk);
@@ -143,7 +143,7 @@ async function onRequest(req, res) {
       .replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
-      res.write(Buffer.from(await gzip(resChunk)));
+      res.write(resChunk);//Buffer.from(await gzip(resChunk)));
     }
     res.end();
   } else {
