@@ -138,12 +138,12 @@ async function onRequest(req, res) {
       for (const host of replaceHosts) {
         resChunk = resChunk.replace(RegExp(host, "gi"), thisHost);
       }
-    resChunk = resChunk
+      resChunk = resChunk
      // .replaceAll('<img', '<img loading="lazy" ')
       .replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
-    res.write(Buffer.from(await gzip(resChunk)));
+      res.write(Buffer.from(await gzip(resChunk)));
     }
     res.end();
   } else {
@@ -155,6 +155,6 @@ async function onRequest(req, res) {
     res.end();
   }
 }catch(e){
-  res.end(e.message);
+  console.log(e.message);
 }
 }
