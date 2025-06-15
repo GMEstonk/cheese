@@ -129,17 +129,22 @@ async function onRequest(req, res) {
   new Headers(nocacheHeaders).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
   if (/html|script|xml/i.test(`${response.headers.get("content-type")}`)) {
-    let resBody = await response.clone().text();
-    for (const host of replaceHosts) {
-      resBody = resBody.replace(RegExp(host, "gi"), thisHost);
-    }
-    resBody = resBody
+    let resBody = response.clone().body;
+    res.setHeader('content-encoding','gzip');
+    const decoder = new TextDecoder();
+    for(const chunk of resBody){
+      resChunk = decoder.decode(chunk);
+      for (const host of replaceHosts) {
+        resChunk = resChunk.replace(RegExp(host, "gi"), thisHost);
+      }
+    resChunk = resChunk
      // .replaceAll('<img', '<img loading="lazy" ')
       .replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
-    res.setHeader('content-encoding','gzip');
-    res.end(Buffer.from(await gzip(resBody)));
+    res.write(Buffer.from(await gzip(resChunk)));
+    }
+    res.end();
   } else {
     const resBody = response.clone().body?.pipeThrough?.(new CompressionStream("gzip"));
     res.setHeader('content-encoding','gzip');
