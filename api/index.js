@@ -155,6 +155,6 @@ async function onRequest(req, res) {
     res.end();
   }
 }catch(e){
-  console.log(e.message);
+  res.end(e.message);
 }
 }
