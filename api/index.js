@@ -130,7 +130,7 @@ async function onRequest(req, res) {
   new Headers(nocacheHeaders).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
   if (/html|script|xml/i.test(`${response.headers.get("content-type")}`)) {
-    let resBody = response.clone().body;
+    let resBody = await response.clone().text();
     res.setHeader('content-encoding','gzip');
     for (const host of replaceHosts) {
         resBody = resBody.replace(RegExp(host, "gi"), thisHost);
