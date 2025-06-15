@@ -143,7 +143,7 @@ async function onRequest(req, res) {
       .replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
-      res.write(resChunk);//Buffer.from(await gzip(resChunk)));
+      res.write(Buffer.from(await new Response(resChunk).arrayBuffer()));
     }
     res.end();
   } else {
