@@ -42,7 +42,7 @@ async function tfetch() {
   }
 
 const hostTarget = "pokeheroes.com";
-const replaceHosts = [
+const globalReplaceHosts = [
   "staticpokeheroes.com",
   "upload.pokeheroes.com",
   "panel.pokeheroes.com",
@@ -55,6 +55,10 @@ http.createServer(onRequest).listen(3000);
 
 async function onRequest(req, res) {
   try{
+  const replaceHosts = [...globalReplaceHosts];
+  if(String(req?.headers?.referer).toLowerCase().includes('wiki')){
+    replaceHosts.unshift('wiki.pokeheroes.com');
+  }
   console.log("Incoming Request: ",req.headers['cookie']);
   const thisHost = req.headers.host;
   req.headers.host = hostTarget;
