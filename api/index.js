@@ -131,20 +131,16 @@ async function onRequest(req, res) {
   res.removeHeader("content-length");
   if (/html|script|xml/i.test(`${response.headers.get("content-type")}`)) {
     let resBody = response.clone().body;
-    //res.setHeader('content-encoding','gzip');
-    const decoder = new TextDecoder();
-    for await(const chunk of resBody??[]){
-      let resChunk = decoder.decode(chunk);
-      for (const host of replaceHosts) {
-        resChunk = resChunk.replace(RegExp(host, "gi"), thisHost);
-      }
-      resChunk = resChunk
+    res.setHeader('content-encoding','gzip');
+    for (const host of replaceHosts) {
+        resBody = resBody.replace(RegExp(host, "gi"), thisHost);
+    }
+      resBody = resBody
      // .replaceAll('<img', '<img loading="lazy" ')
       .replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
-      res.write(Buffer.from(await new Response(resChunk).arrayBuffer()));
-    }
+      res.write(Buffer.from(await gzip(resBody)));
     res.end();
   } else {
     const resBody = response.clone().body?.pipeThrough?.(new CompressionStream("gzip"));
