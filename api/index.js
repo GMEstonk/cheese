@@ -54,6 +54,7 @@ const replaceHosts = [
 http.createServer(onRequest).listen(3000);
 
 async function onRequest(req, res) {
+  try{
   console.log("Incoming Request: ",req.headers['cookie']);
   const thisHost = req.headers.host;
   req.headers.host = hostTarget;
@@ -153,4 +154,7 @@ async function onRequest(req, res) {
     }
     res.end();
   }
+}catch(e){
+  res.end(e.message);
+}
 }
