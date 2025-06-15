@@ -133,7 +133,7 @@ async function onRequest(req, res) {
     let resBody = response.clone().body;
     res.setHeader('content-encoding','gzip');
     const decoder = new TextDecoder();
-    for(const chunk of resBody){
+    for(const chunk of resBody??[]){
       let resChunk = decoder.decode(chunk);
       for (const host of replaceHosts) {
         resChunk = resChunk.replace(RegExp(host, "gi"), thisHost);
