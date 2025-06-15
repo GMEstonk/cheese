@@ -140,7 +140,7 @@ async function onRequest(req, res) {
         resBody = resBody.replace(RegExp(host, "gi"), thisHost);
     }
       resBody = resBody
-     .split('<img ').map((x,i,a)=>i>a?.length/2?x+' loading="lazy" ':x).join('<img ')
+     .split('<img ').map((x,i,a)=>i>a?.length/2?' loading="lazy" '+x:x).join('<img ')
       .replace('<head>','<head><script src="patchy.js"></script><script src="sw.js"></script><link rel="stylesheet" href="viz.css"></link>')
       .replaceAll('chatList.length','(chatList||[]).length')
       .replaceAll('Date.parse(timeDisplay.text()).getTime();','(Date.parse(timeDisplay.text())?.getTime?.() ?? new Date().getTime());');
