@@ -50,6 +50,7 @@ const $response = Symbol('*response');
 const $fetch = Symbol('*fetch');
 globalThis[$fetch] = fetch;
 globalThis.fetch = async function fetch(){
+  const args = [...arguments].map(x=>x?.clone?.() ?? x);
   let request,response;
   try{
     request = new Request(...arguments);
@@ -84,7 +85,7 @@ globalThis.fetch = async function fetch(){
       }
     }
     if(!instanceOf(response,Response)){
-     response = await globalThis[$fetch](...arguments);
+     response = await globalThis[$fetch](...args);
     }
     return response;
   }catch(e){
