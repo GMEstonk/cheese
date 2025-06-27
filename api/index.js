@@ -54,7 +54,7 @@ globalThis.fetch = async function fetch(){
   let request,response;
   try{
     request = new Request(...arguments);
-    if (request.method === 'GET'){
+    if (request.method === 'GET' && !request.url.includes('?') && !request.url.includes('#')){
       let cachedResponse = WeakCache.get(request.url);
       if (cachedResponse) {
         request[$response] = cachedResponse;
