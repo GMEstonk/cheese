@@ -2,7 +2,9 @@
   let cheese = caches.open("cheese");
   const cache = {
     set:(req,res)=>{
-      const resClone = res?.clone?.();
+      const resClone = new Response(res?.clone?.().body);
+      resClone.headers.set('content-type',res.headers.get('content-type'));
+      if(res.headers.has('content-encoding'))resClone.headers.set('content-encoding',res.headers.get('content-encoding'));
       return (async()=>{
         if(cheese instanceof Promise)cheese = await cheese;
         return cheese.put(req,resClone)
