@@ -168,7 +168,12 @@ async function onRequest(req, res) {
   const thisHost = req.headers.host;
   req.headers.host = hostTarget;
   req.headers.referer = hostTarget;
-
+  if(req.headers.cookie){
+    req.headers['xx-cookie'] = req.headers.cookie;
+  }
+  if(req.headers['set-cookie']){
+    req.headers['xx-set-cookie'] = req.headers['set-cookie'];
+  }
 
   if(req.url.endsWith('patchy.js')){
     res.setHeader('content-type','text/javascript');
