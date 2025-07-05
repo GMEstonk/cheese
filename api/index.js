@@ -153,7 +153,10 @@ const globalReplaceHosts = [
   "pokeheroes.com"
 ];
 
-http.createServer(onRequest).listen(3000);
+http.createServer({
+  joinDuplicateHeaders:true,
+  insecureHTTPParser:true,
+},onRequest).listen(3000);
 
 async function onRequest(req, res) {
   try{
