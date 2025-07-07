@@ -215,7 +215,7 @@ async function onRequest(req, res) {
   }
   let request = new Request(`https://${'heroespoke.pokeheroes.workers.dev'}${req.url}`, options);
   const oldHeaders = new Headers(request.headers);
-  request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
+  request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,'heroespoke.pokeheroes.workers.dev')));
   request.headers.set('xx-host-target',hostTarget);
   request.headers.append('cookie','username=Substitute');
   request.headers.delete("content-length");
