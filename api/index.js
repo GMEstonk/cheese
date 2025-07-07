@@ -99,6 +99,13 @@ globalThis.fetch = async function fetch(){
 
 })();
 
+const parse = x =>{
+  try{
+    return JSON.parse(x);
+  }catch{
+    return x;
+  }
+};
 
 const urlMap = new Map();
 const { Readable } = require("stream");
@@ -242,7 +249,9 @@ async function onRequest(req, res) {
   }
   
   response.headers.forEach((value, key) => res.setHeader(key, value));
-  if(
+  if(response.headers.has('xx-set-cookie')){
+    res.setHeader('set-cookie',parse(response.headers.get('xx-set-cookie')));
+  }
   new Headers(nocacheHeaders).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
   if (/html|script|xml/i.test(`${response.headers.get("content-type")}`)) {
