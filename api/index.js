@@ -240,7 +240,7 @@ async function onRequest(req, res) {
       response = await tfetch(request);
       console.log("Retry Response: ",response.headers.get('set-cookie'));
       headers = new Headers();
-      response.headers.forEach((value,key)=>headers.set(key,String(value).replace(cloudHost,thisHost)));
+      response.headers.forEach((value,key)=>headers.set(key,String(value).replace(host,thisHost)));
       response = new Response(response.clone().body,Object.defineProperty(response.clone(),'headers',{value:headers}));
     }
   }
