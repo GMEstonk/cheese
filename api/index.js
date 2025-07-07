@@ -171,9 +171,6 @@ async function onRequest(req, res) {
   if(req.headers.cookie){
     req.headers['xx-cookie'] = req.headers.cookie;
   }
-  if(req.headers['set-cookie']){
-    req.headers['xx-set-cookie'] = req.headers['set-cookie'];
-  }
 
   if(req.url.endsWith('patchy.js')){
     res.setHeader('content-type','text/javascript');
@@ -209,8 +206,10 @@ async function onRequest(req, res) {
     options.body = body,
     options.duplex = 'half';
   }
-  let request = new Request(urlMap.get(req.url) ?? `https://${hostTarget}${req.url}`, options);
+  let request = new Request(`https://${'heroespoke.pokeheroes.workers.dev'}${req.url}`, options);
+  const oldHeaders = new Headers(request.headers);
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,hostTarget)));
+  request.headers.set('xx-host-target',hostTarget);
   request.headers.append('cookie','username=Substitute');
   request.headers.delete("content-length");
   request.headers.delete("content-encoding");
@@ -225,8 +224,10 @@ async function onRequest(req, res) {
   for (const host of replaceHosts) {
     if (response.status >= 400) {
       const url = new URL(request.url);
-      url.host = host;
+      url.host = 'heroespoke.pokeheroes.workers.dev';//host;
       request = new Request(String(url), request.clone());
+      oldHeaders.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,host)));
+      request.headers.set('xx-host-target',host);
       console.log("Retry Request: ",request.headers.get('cookie'));
       response = await tfetch(request);
       console.log("Retry Response: ",response.headers.get('set-cookie'));
@@ -241,6 +242,7 @@ async function onRequest(req, res) {
   }
   
   response.headers.forEach((value, key) => res.setHeader(key, value));
+  if(
   new Headers(nocacheHeaders).forEach((value, key) => res.setHeader(key, value));
   res.removeHeader("content-length");
   if (/html|script|xml/i.test(`${response.headers.get("content-type")}`)) {
