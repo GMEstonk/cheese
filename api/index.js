@@ -213,7 +213,7 @@ async function onRequest(req, res) {
     options.body = body,
     options.duplex = 'half';
   }
-  const cloudHost = 'heroespoke.pokeheroes.workers.dev';
+  const cloudHost = hostTarget;// 'heroespoke.pokeheroes.workers.dev';
   let request = new Request(`https://${cloudHost}${req.url}`, options);
   const oldHeaders = new Headers(request.headers);
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,cloudHost)));
