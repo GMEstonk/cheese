@@ -259,7 +259,7 @@ async function onRequest(req, res) {
     let resBody = await response.clone().text();
     res.setHeader('content-encoding','gzip');
     for (const host of replaceHosts) {
-        resBody = resBody.replace(RegExp(cloudHost, "gi"), thisHost);
+        resBody = resBody.replace(RegExp(host, "gi"), thisHost);
     }
       resBody = resBody
      //.split('<img ').map((x,i,a)=>i<a?.length/2?' loading="lazy" '+x:x).join('<img ')
