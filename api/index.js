@@ -213,9 +213,10 @@ async function onRequest(req, res) {
     options.body = body,
     options.duplex = 'half';
   }
-  let request = new Request(`https://${'heroespoke.pokeheroes.workers.dev'}${req.url}`, options);
+  const cloudHost = 'heroespoke.pokeheroes.workers.dev';
+  let request = new Request(`https://${cloudHost}${req.url}`, options);
   const oldHeaders = new Headers(request.headers);
-  request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,'heroespoke.pokeheroes.workers.dev')));
+  request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,cloudHost)));
   request.headers.set('xx-host-target',hostTarget);
   request.headers.append('cookie','username=Substitute');
   request.headers.delete("content-length");
@@ -225,13 +226,13 @@ async function onRequest(req, res) {
   let response = await tfetch(request);
   console.log("Fetch Response: ",response.headers.get('set-cookie'));
   let headers = new Headers();
-  response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
+  response.headers.forEach((value,key)=>headers.set(key,String(value).replace(cloudHost,thisHost)));
   response = new Response(response.clone().body,Object.defineProperty(response.clone(),'headers',{value:headers}));
   
   for (const host of replaceHosts) {
     if (response.status >= 400) {
       const url = new URL(request.url);
-      url.host = 'heroespoke.pokeheroes.workers.dev';//host;
+      url.host = cloudHost;//host;
       request = new Request(String(url), request.clone());
       oldHeaders.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,host)));
       request.headers.set('xx-host-target',host);
@@ -239,7 +240,7 @@ async function onRequest(req, res) {
       response = await tfetch(request);
       console.log("Retry Response: ",response.headers.get('set-cookie'));
       headers = new Headers();
-      response.headers.forEach((value,key)=>headers.set(key,String(value).replace(hostTarget,thisHost)));
+      response.headers.forEach((value,key)=>headers.set(key,String(value).replace(cloudHost,thisHost)));
       response = new Response(response.clone().body,Object.defineProperty(response.clone(),'headers',{value:headers}));
     }
   }
@@ -258,7 +259,7 @@ async function onRequest(req, res) {
     let resBody = await response.clone().text();
     res.setHeader('content-encoding','gzip');
     for (const host of replaceHosts) {
-        resBody = resBody.replace(RegExp(host, "gi"), thisHost);
+        resBody = resBody.replace(RegExp(cloudHost, "gi"), thisHost);
     }
       resBody = resBody
      //.split('<img ').map((x,i,a)=>i<a?.length/2?' loading="lazy" '+x:x).join('<img ')
