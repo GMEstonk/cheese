@@ -232,7 +232,7 @@ async function onRequest(req, res) {
   for (const host of replaceHosts) {
     if (response.status >= 400) {
       const url = new URL(request.url);
-      url.host = cloudHost;//host;
+      url.host = host;
       request = new Request(String(url), request.clone());
       oldHeaders.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,host)));
       request.headers.set('xx-host-target',host);
