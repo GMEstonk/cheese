@@ -32,7 +32,8 @@
 
   self?.ServiceWorkerGlobalScope && addEventListener?.("activate", event => event?.waitUntil?.(clients?.claim?.()));
   const localhost = location.host;
-  const rex = RegExp(atob('cG9rZWhlcm9lcy5jb20='),'gi');
+  globalThis.rexp ??= 'cG9rZWhlcm9lcy5jb20=';
+  const rex = RegExp(atob(globalThis.rexp),'gi');
   self?.ServiceWorkerGlobalScope && addEventListener?.('fetch', function onRequest(event) {
     const req = event?.request;
     const reqURL = String(req?.url);
