@@ -1,3 +1,4 @@
+globalThis.username ??= 'Substitute';
 (()=>{
 const instanceOf=(x,y) =>{
   try{
@@ -218,7 +219,7 @@ async function onRequest(req, res) {
   const oldHeaders = new Headers(request.headers);
   request.headers.forEach((value,key)=>request.headers.set(key,String(value).replace(thisHost,cloudHost)));
   request.headers.set('xx-host-target',hostTarget);
-  request.headers.append('cookie','username=Substitute');
+  request.headers.append('cookie',`username=${globalThis.username}`);
   request.headers.delete("content-length");
   request.headers.delete("content-encoding");
   console.log("Fetch Request: ",request.headers.get('cookie'));
